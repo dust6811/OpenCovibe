@@ -1017,9 +1017,10 @@ impl ProtocolState {
                                                 .get("costUSD")
                                                 .and_then(|v| v.as_f64())
                                                 .unwrap_or(0.0),
-                                            context_window: entry
-                                                .get("contextWindow")
-                                                .and_then(|v| v.as_u64()),
+                                            // Use our context window table for known models (CLI values are often outdated).
+                                            // Only use CLI value if we don't have the model in our table.
+                                            context_window: crate::model_context::get_context_window(model_name)
+                                                .or_else(|| entry.get("contextWindow").and_then(|v| v.as_u64())),
                                             max_output_tokens: entry
                                                 .get("maxOutputTokens")
                                                 .and_then(|v| v.as_u64()),
@@ -2108,6 +2109,80 @@ mod tests {
                 let entry = &mu["opus-4"];
                 assert_eq!(entry.input_tokens, 80);
                 assert_eq!(entry.output_tokens, 40);
+            }
+            _ => unreachable!(),
+        }
+    }
+
+    #[test]
+    fn test_result_context_window_fallback() {
+        // Test that context_window fallback works when CLI doesn't provide it
+        let mut ps = ProtocolState::new(false);
+        let raw = json!({
+            "type": "result",
+            "subtype": "success",
+            "usage": {"input_tokens": 100, "output_tokens": 50},
+            "modelUsage": {
+                "claude-opus-4-6": {
+                    "inputTokens": 80,
+                    "outputTokens": 40,
+                    "cacheReadInputTokens": 0,
+                    "cacheCreationInputTokens": 0,
+                    "webSearchRequests": 0,
+                    "costUSD": 0.005
+                    // Note: no contextWindow field - should use fallback
+                }
+            }
+        });
+        let events = ps.map_event(RUN, &raw);
+        let usage = events
+            .iter()
+            .find(|e| matches!(e, BusEvent::UsageUpdate { .. }))
+            .unwrap();
+        match usage {
+            BusEvent::UsageUpdate { model_usage, .. } => {
+                let mu = model_usage.as_ref().expect("should have model_usage");
+                assert!(mu.contains_key("claude-opus-4-6"));
+                let entry = &mu["claude-opus-4-6"];
+                // Fallback should provide 1M context window
+                assert_eq!(entry.context_window, Some(1_048_576));
+            }
+            _ => unreachable!(),
+        }
+    }
+
+    #[test]
+    fn test_result_context_window_explicit() {
+        // Test that explicit contextWindow from CLI is preserved
+        let mut ps = ProtocolState::new(false);
+        let raw = json!({
+            "type": "result",
+            "subtype": "success",
+            "usage": {"input_tokens": 100, "output_tokens": 50},
+            "modelUsage": {
+                "custom-model": {
+                    "inputTokens": 80,
+                    "outputTokens": 40,
+                    "cacheReadInputTokens": 0,
+                    "cacheCreationInputTokens": 0,
+                    "webSearchRequests": 0,
+                    "costUSD": 0.005,
+                    "contextWindow": 500000  // Explicit value from CLI
+                }
+            }
+        });
+        let events = ps.map_event(RUN, &raw);
+        let usage = events
+            .iter()
+            .find(|e| matches!(e, BusEvent::UsageUpdate { .. }))
+            .unwrap();
+        match usage {
+            BusEvent::UsageUpdate { model_usage, .. } => {
+                let mu = model_usage.as_ref().expect("should have model_usage");
+                assert!(mu.contains_key("custom-model"));
+                let entry = &mu["custom-model"];
+                // Explicit value should be preserved
+                assert_eq!(entry.context_window, Some(500_000));
             }
             _ => unreachable!(),
         }

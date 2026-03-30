@@ -1421,6 +1421,36 @@
           </div>
         </Card>
 
+        <!-- Permission Mode Card -->
+        <Card class="p-6 space-y-4">
+          <h2 class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            {t("settings_general_permissionMode")}
+          </h2>
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-medium">{t("settings_general_permissionMode")}</p>
+              <p class="text-xs text-muted-foreground">
+                {t("settings_general_permissionModeDesc")}
+              </p>
+            </div>
+            <select
+              class="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground
+                focus:outline-none focus:ring-1 focus:ring-primary"
+              value={settings?.permission_mode ?? "auto_read"}
+              onchange={(e) => {
+                const newMode = (e.target as HTMLSelectElement).value;
+                saveGeneralPatch({ permission_mode: newMode });
+              }}
+            >
+              <option value="auto_read">{t("settings_general_permissionModeAutoEdit")}</option>
+              <option value="auto_all">{t("settings_general_permissionModeFullAuto")}</option>
+              <option value="ask">{t("settings_general_permissionModeAsk")}</option>
+              <option value="plan">{t("settings_general_permissionModePlan")}</option>
+              <option value="dont_ask">{t("settings_general_permissionModeDontAsk")}</option>
+            </select>
+          </div>
+        </Card>
+
         <!-- Web Server Card (desktop only) -->
         {#if getTransport().isDesktop()}
           <Card class="p-6 space-y-4">

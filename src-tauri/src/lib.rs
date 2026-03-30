@@ -1,6 +1,7 @@
 pub mod agent;
 pub mod commands;
 pub mod hooks;
+pub mod model_context;
 pub mod models;
 pub mod pricing;
 pub mod process_ext;

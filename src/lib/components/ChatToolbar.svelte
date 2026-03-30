@@ -243,6 +243,28 @@
     {t("toolbar_export")}
   </button>
 
+  <!-- Split view toggle -->
+  <button
+    class="flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-medium hover:bg-accent transition-colors"
+    onclick={() => {
+      const event = new CustomEvent("ocv:toggle-split-view");
+      window.dispatchEvent(event);
+    }}
+    title={t("splitView_toggle")}
+  >
+    <svg
+      class="h-3.5 w-3.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      ><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M12 3v18" /></svg
+    >
+    {t("splitView_files")}
+  </button>
+
   <div class="flex-1"></div>
 
   <!-- Cost display -->
