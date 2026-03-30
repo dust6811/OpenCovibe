@@ -84,6 +84,7 @@
   import { truncate, cwdDisplayLabel, formatTokenCount } from "$lib/utils/format";
   import { uuid } from "$lib/utils/uuid";
   import RewindModal from "$lib/components/RewindModal.svelte";
+  // import SplitViewPanel from "$lib/components/SplitViewPanel.svelte"; // Temporarily disabled - component needs fixing
   import type { ElementSelection } from "$lib/types";
   import { isElementSelection } from "$lib/types";
 
@@ -141,6 +142,10 @@
   let previewOpen = $derived(previewInstanceId !== "");
   let previewUrlBarOpen = $state(false);
   let previewUrlInput = $state(localStorage.getItem("ocv:preview-url") ?? "http://localhost:");
+
+  // ── Split view state ──
+  let splitViewOpen = $state(localStorage.getItem("ocv:split-view") === "true");
+  let splitViewWidth = $state(parseInt(localStorage.getItem("ocv:split-view-width") || "350", 10));
 
   // ── Model contamination helpers ──
 
@@ -1289,6 +1294,13 @@
     }
     window.addEventListener("ocv:statusbar-toggle", onStatusBarToggle);
 
+    // Split view toggle handler
+    function onToggleSplitView() {
+      splitViewOpen = !splitViewOpen;
+      localStorage.setItem("ocv:split-view", String(splitViewOpen));
+    }
+    window.addEventListener("ocv:toggle-split-view", onToggleSplitView);
+
     // Register chat-context keybinding callbacks
     keybindingStore.registerCallback("chat:interrupt", () => {
       if (shortcutHelpOpen) {
@@ -1433,6 +1445,7 @@
 
     return () => {
       window.removeEventListener("ocv:statusbar-toggle", onStatusBarToggle);
+      window.removeEventListener("ocv:toggle-split-view", onToggleSplitView);
       keybindingStore.unregisterCallback("chat:interrupt");
       keybindingStore.unregisterCallback("chat:sendGlobal");
       keybindingStore.unregisterCallback("app:shortcutHelp");
@@ -3341,6 +3354,42 @@
       store.error = String(e);
     }
   }
+
+  // ── Split view resize ──
+  let isResizing = $state(false);
+  let resizeStartX = 0;
+  let resizeStartWidth = 0;
+
+  function handleSplitResizeStart(e: MouseEvent) {
+    e.preventDefault();
+    isResizing = true;
+    resizeStartX = e.clientX;
+    resizeStartWidth = splitViewWidth;
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    document.body.style.pointerEvents = "none";
+
+    function handleMouseMove(moveEvent: MouseEvent) {
+      // Panel is on the right, so moving left increases width, moving right decreases
+      const deltaX = resizeStartX - moveEvent.clientX;
+      const newWidth = resizeStartWidth + deltaX;
+      // Clamp between 200px and 800px
+      splitViewWidth = Math.max(200, Math.min(800, newWidth));
+      localStorage.setItem("ocv:split-view-width", String(splitViewWidth));
+    }
+
+    function handleMouseUp() {
+      isResizing = false;
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      document.body.style.pointerEvents = "";
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    }
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  }
 </script>
 
 {#snippet initHintCard()}
@@ -4663,6 +4712,8 @@
       activeBackgroundTasks={store.activeBackgroundTasks}
     />
   {/if}
+
+  <!-- Split view panel - TEMPORARILY DISABLED (component needs fixing) -->
 
   <RewindModal
     bind:open={rewindModalOpen}

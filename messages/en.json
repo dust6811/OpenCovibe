@@ -106,6 +106,13 @@
   "settings_general_display": "Display",
   "settings_general_uiZoom": "Interface Scale",
   "settings_general_uiZoomDesc": "Adjust the overall size of the interface",
+  "settings_general_permissionMode": "Default Permission Mode",
+  "settings_general_permissionModeDesc": "Default permission mode for new chat sessions (applies to all sessions)",
+  "settings_general_permissionModeAsk": "Ask (Default)",
+  "settings_general_permissionModeAutoEdit": "Auto Edit",
+  "settings_general_permissionModeFullAuto": "Full Auto (Bypass)",
+  "settings_general_permissionModePlan": "Plan (Read-only)",
+  "settings_general_permissionModeDontAsk": "Don't Ask (Deny)",
 
   "settings_cliConfig_loading": "Loading CLI config...",
   "settings_cliConfig_loadFailed": "Failed to load CLI config: {error}",
@@ -724,6 +731,12 @@
   "explorer_emptyFile": "Empty file",
   "explorer_discardConfirm": "You have unsaved changes. Discard them?",
   "explorer_saveDisabledInPreview": "Switch to Edit mode to save",
+
+  "splitView_files": "Files",
+  "splitView_refresh": "Refresh file tree",
+  "splitView_selectFile": "Select a file to view",
+  "splitView_toggle": "Toggle split view",
+  "splitView_close": "Close split view",
 
   "release_goBack": "Go back",
   "release_title": "Release Notes",

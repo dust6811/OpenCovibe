@@ -106,6 +106,13 @@
   "settings_general_display": "显示",
   "settings_general_uiZoom": "界面缩放",
   "settings_general_uiZoomDesc": "调整界面整体大小",
+  "settings_general_permissionMode": "默认权限模式",
+  "settings_general_permissionModeDesc": "新聊天会话的默认权限模式（应用于所有会话）",
+  "settings_general_permissionModeAsk": "询问（默认）",
+  "settings_general_permissionModeAutoEdit": "自动编辑",
+  "settings_general_permissionModeFullAuto": "完全自动（绕过）",
+  "settings_general_permissionModePlan": "计划（只读）",
+  "settings_general_permissionModeDontAsk": "不询问（拒绝）",
 
   "settings_cliConfig_loading": "正在加载 CLI 配置...",
   "settings_cliConfig_loadFailed": "加载 CLI 配置失败：{error}",
@@ -724,6 +731,12 @@
   "explorer_emptyFile": "空文件",
   "explorer_discardConfirm": "有未保存的更改，确定要丢弃吗？",
   "explorer_saveDisabledInPreview": "切换到编辑模式后可保存",
+
+  "splitView_files": "文件",
+  "splitView_refresh": "刷新文件树",
+  "splitView_selectFile": "选择文件以查看",
+  "splitView_toggle": "切换分屏视图",
+  "splitView_close": "关闭分屏视图",
 
   "release_goBack": "返回",
   "release_title": "发布说明",
