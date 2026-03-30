@@ -14,6 +14,7 @@
   } = $props();
 
   let isSelected = $derived(node.path === selectedFilePath);
+  let isNotSelected = $derived(!isSelected);
   let depth = $derived(node.depth || 0);
   let paddingLeft = $derived(`${depth * 16 + 8}px`);
 
@@ -34,9 +35,8 @@
 
 <div>
   <div
-    class="flex items-center gap-1.5 py-1 px-2 cursor-pointer rounded text-xs transition-colors group"
+    class="flex items-center gap-1.5 py-1 px-2 cursor-pointer rounded text-xs transition-colors group hover:bg-accent/50"
     class:bg-accent={isSelected}
-    class:hover:bg-accent/50={!isSelected}
     style="padding-left: {paddingLeft}"
     onclick={handleClick}
     ondblclick={handleDoubleClick}

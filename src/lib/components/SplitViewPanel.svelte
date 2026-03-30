@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getGitDiff, readTextFile, readFileBase64, writeTextFile, listDir } from "$lib/api";
+  import { getGitDiff, readTextFile, readFileBase64, writeTextFile, listDirectoryectory } from "$lib/api";
   import { fileName as pathFileName } from "$lib/utils/format";
   import { t } from "$lib/i18n/index.svelte";
   import { onMount } from "svelte";
@@ -114,7 +114,7 @@
   async function loadFileTree(dirPath: string = ""): Promise<FileNode[]> {
     treeLoading = true;
     try {
-      const entries = await listDir(dirPath || projectCwd, projectCwd);
+      const entries = await listDirectory(dirPath || projectCwd, projectCwd);
       const nodes: FileNode[] = [];
       for (const entry of entries) {
         if (entry.name.startsWith(".")) continue; // skip hidden files
@@ -145,7 +145,7 @@
       // Load children if not already loaded
       if (!node.children || node.children.length === 0) {
         try {
-          const entries = await listDir(node.path, projectCwd);
+          const entries = await listDirectory(node.path, projectCwd);
           node.children = entries
             .filter((e) => !e.name.startsWith("."))
             .map((entry) => ({

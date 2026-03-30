@@ -85,7 +85,7 @@
   import { mapSettled } from "$lib/utils/async-utils";
   import { uuid } from "$lib/utils/uuid";
   import RewindModal from "$lib/components/RewindModal.svelte";
-  // import SplitViewPanel from "$lib/components/SplitViewPanel.svelte"; // Temporarily disabled - component needs fixing
+  import SplitViewPanel from "$lib/components/SplitViewPanel.svelte";
   import type { ElementSelection } from "$lib/types";
   import { isElementSelection } from "$lib/types";
 
@@ -4630,7 +4630,19 @@
     />
   {/if}
 
-  <!-- Split view panel - TEMPORARILY DISABLED (component needs fixing) -->
+  <!-- Split view panel -->
+  {#if splitViewOpen}
+    {@const cwd = store.effectiveCwd || folderCwdOverride || localStorage.getItem("ocv:project-cwd") || ""}
+    <div class="relative flex" style="width: {splitViewWidth}px;">
+      <SplitViewPanel {cwd} />
+      <div
+        class="absolute left-0 top-0 h-full w-1 cursor-col-resize hover:bg-primary/20 transition-colors z-20"
+        role="separator"
+        aria-orientation="vertical"
+        onmousedown={handleSplitResizeStart}
+      ></div>
+    </div>
+  {/if}
 
   <RewindModal
     bind:open={rewindModalOpen}
